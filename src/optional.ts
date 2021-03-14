@@ -47,6 +47,7 @@ export function optional<T>(id: ServiceIdentifier<T>) {
 
     function decorator<F extends Constructor<any[], any>, I extends number>(target: F, propertyKey: undefined, parameterIndex: MatchingParameter<F, I, T | undefined>): void;
     function decorator<O extends object, K extends keyof O>(target: NonConstructor<O>, propertyKey: MatchingKey<O, K, T | undefined>): void;
+    function decorator<O extends object>(target: NonConstructor<O>, propertyKey: string | symbol, descriptor?: TypedPropertyDescriptor<T>): void;
     function decorator(target: object, propertyKey: string | symbol | undefined, parameterIndex?: number | PropertyDescriptor): void {
         if (arguments.length === 2 || arguments.length === 3 && parameterIndex === undefined) {
             if (typeof target === "object" &&

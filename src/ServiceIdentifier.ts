@@ -48,6 +48,7 @@ export interface ServiceIdentifier<T> {
     readonly serviceName: string | symbol;
     <F extends Constructor<any[], any>, I extends number>(target: F, propertyKey: undefined, parameterIndex: MatchingParameter<F, I, T>): void;
     <O extends object, K extends keyof O>(target: NonConstructor<O>, propertyKey: MatchingKey<O, K, T>): void;
+    <O extends object>(target: NonConstructor<O>, propertyKey: string | symbol, descriptor?: TypedPropertyDescriptor<T>): void;
     toString(options?: { quoted?: boolean }): string;
 }
 

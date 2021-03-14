@@ -7,7 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc -b ."
+    "build": "tsc -b .",
+    "build-samples": "tsc -b samples"
   },
   "author": "Ron Buckton <rbuckton@chronicles.org>",
   "license": "MIT",

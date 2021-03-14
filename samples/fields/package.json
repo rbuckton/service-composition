@@ -1,0 +1,10 @@
+{
+    "name": "service-composition-samples-basic",
+    "version": "0.0.0",
+    "private": true,
+    "main": "dist/main.js",
+    "dependencies": {
+        "service-composition": "file:../..",
+        "tslib": "^2.1.0"
+    }
+}
