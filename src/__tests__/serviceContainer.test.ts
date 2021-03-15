@@ -414,3 +414,46 @@ describe("containers", () => {
         });
     });
 });
+describe("descriptors", () => {
+    describe("classes", () => {
+        it("simple", () => {
+            const IPart = ServiceIdentifier.create("IPart");
+            class Part { }
+            const services = new ServiceCollection();
+            services.setClass(IPart, Part);
+            const container = new ServiceContainer(services);
+            const part1 = container.getService(IPart);
+            const part2 = container.getService(IPart);
+            expect(part1).toBeInstanceOf(Part);
+            expect(part2).toBe(part1);
+        });
+    });
+    it("instance", () => {
+        const IPart = ServiceIdentifier.create("IPart");
+        const part = {};
+        const services = new ServiceCollection();
+        services.setInstance(IPart, part);
+        const container = new ServiceContainer(services);
+        const part1 = container.getService(IPart);
+        const part2 = container.getService(IPart);
+        expect(part1).toBe(part);
+        expect(part2).toBe(part1);
+    });
+    it("factory", () => {
+        const IPart = ServiceIdentifier.create("IPart");
+        const parts: {}[] = [];
+        const factory = () => {
+            const part = {};
+            parts.push(part);
+            return part;
+        };
+        const services = new ServiceCollection();
+        services.setFactory(IPart, factory);
+        const container = new ServiceContainer(services);
+        const part1 = container.getService(IPart);
+        const part2 = container.getService(IPart);
+        expect(part2).toBe(part1);
+        expect(parts.length).toBe(1);
+        expect(part1).toBe(parts[0]);
+    });
+});

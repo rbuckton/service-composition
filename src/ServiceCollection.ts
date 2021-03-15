@@ -102,6 +102,18 @@ export class ServiceCollection {
     }
 
     /**
+     * Sets a factory callback to use for a `ServiceIdentifier`.
+     * 
+     * This is shorthand for `coll.set(id, ServiceDescriptor.forFactory(value))`.
+     * 
+     * @param id The identifier for the service.
+     * @param factory The factory callback for the service.
+     */
+    setFactory<T>(id: ServiceIdentifier<T>, factory: () => T) {
+        return this.set(id, ServiceDescriptor.forFactory(factory));
+    }
+
+    /**
      * Sets a class constructor to use for a `ServiceIdentifier`.
      * 
      * This is shorthand for `coll.set(id, ServiceDescriptor.forClass(ctor, staticArguments, supportsDelayedInstantiation))`.
@@ -165,6 +177,22 @@ export class ServiceCollection {
      */
     addInstance<T>(id: ServiceIdentifier<T>, value: T) {
         return this.add(id, ServiceDescriptor.forInstance(value));
+    }
+
+    /**
+     * Adds a factory callback to use for a `ServiceIdentifier`.
+     * 
+     * This is shorthand for `coll.add(id, ServiceDescriptor.forFactory(value))`.
+     * 
+     * NOTE: This does not replace any existing services for the provided `id`, instead it appends
+     * them to the list of services. This can affect service cardinality if a dependency expects
+     * only a single service to be injected.
+     * 
+     * @param id The identifier for the service.
+     * @param factory The factory callback for the service.
+     */
+    addFactory<T>(id: ServiceIdentifier<T>, factory: () => T) {
+        return this.add(id, ServiceDescriptor.forFactory(factory));
     }
 
     /**

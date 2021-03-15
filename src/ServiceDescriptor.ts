@@ -58,6 +58,10 @@ export abstract class ServiceDescriptor<T> {
     static forInstance<T>(instance: T) {
         return new InstanceDescriptor(instance);
     }
+
+    static forFactory<T>(factory: () => T) {
+        return new FactoryDescriptor(factory);
+    }
 }
 
 export class ClassDescriptor<S extends unknown[], A extends unknown[], T> extends ServiceDescriptor<T> {
@@ -105,5 +109,17 @@ export class InstanceDescriptor<T> extends ServiceDescriptor<T> {
 
     activate(_dependencies: any[]) {
         return this.instance;
+    }
+}
+
+export class FactoryDescriptor<T> extends ServiceDescriptor<T> {
+    constructor(
+        readonly factory: () => T
+    ) {
+        super("factory", [], false)
+    }
+
+    activate(_dependencies: any[]) {
+        return this.factory();
     }
 }
