@@ -34,6 +34,7 @@
  *   SOFTWARE.
  */
 
+import { DecoratorArgs, isConstructorParameterDecoratorArgs, isInstancePropertyOrFieldDecoratorArgs } from "./decorator";
 import { ServiceDependency, ServiceDependencyCardinality } from "./ServiceDependency";
 import { Constructor, MatchingKey, MatchingParameter, NonConstructor } from "./types";
 
@@ -69,27 +70,19 @@ export namespace ServiceIdentifier {
         }
 
         const id: ServiceIdentifier<T> = Object.defineProperties(
-            function(target: object, propertyKey: string | symbol | undefined, parameterIndex?: number): void {
-                if (arguments.length === 2 || arguments.length === 3 && parameterIndex === undefined) {
-                    if (typeof target === "object" && 
-                        typeof target.constructor === "function" &&
-                        target.constructor !== Object &&
-                        target.constructor !== Function &&
-                        (typeof propertyKey === "string" || typeof propertyKey === "symbol")) {
-                        ServiceDependency.store(id, target.constructor as new (...args: any[]) => any, propertyKey, ServiceDependencyCardinality.ExactlyOne);
-                        return;
-                    }
+            function(...args: DecoratorArgs<T>): void {
+                if (isConstructorParameterDecoratorArgs(args)) {
+                    const [target, , parameterIndex] = args;
+                    ServiceDependency.store(id, target, parameterIndex, ServiceDependencyCardinality.ExactlyOne);
                 }
-                else if (arguments.length === 3) {
-                    if (typeof target === "function" &&
-                        propertyKey === undefined &&
-                        typeof parameterIndex === "number") {
-                        ServiceDependency.store(id, target as new (...args: any[]) => any, parameterIndex, ServiceDependencyCardinality.ExactlyOne);
-                        return;
-                    }
+                else if (isInstancePropertyOrFieldDecoratorArgs(args)) {
+                    const [target, propertyKey] = args;
+                    ServiceDependency.store(id, target.constructor as Constructor<any[], any>, propertyKey, ServiceDependencyCardinality.ExactlyOne);
                 }
-                debugger;
-                throw new TypeError(`@${serviceName.toString()} can only be used to decorate a constructor parameter or an instance property`);
+                else {
+                    debugger;
+                    throw new TypeError(`@${serviceName.toString()} can only be used to decorate a constructor parameter or an instance property`);
+                }
             },
             {
                 serviceName: {

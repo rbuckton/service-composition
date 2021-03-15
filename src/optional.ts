@@ -37,6 +37,7 @@
 import { ServiceIdentifier } from "./ServiceIdentifier";
 import { ServiceDependency, ServiceDependencyCardinality } from "./ServiceDependency";
 import { Constructor, MatchingKey, MatchingParameter, NonConstructor } from "./types";
+import { DecoratorArgs, isConstructorParameterDecoratorArgs, isInstancePropertyOrFieldDecoratorArgs } from "./decorator";
 
 /**
  * A decorator used to indicate a parameter or property expects zero or one services with the provided identifier.
@@ -47,27 +48,19 @@ export function optional<T>(id: ServiceIdentifier<T>) {
 
     function decorator<F extends Constructor<any[], any>, I extends number>(target: F, propertyKey: undefined, parameterIndex: MatchingParameter<F, I, T | undefined>): void;
     function decorator<O extends object, K extends keyof O>(target: NonConstructor<O>, propertyKey: MatchingKey<O, K, T | undefined>): void;
-    function decorator<O extends object>(target: NonConstructor<O>, propertyKey: string | symbol, descriptor?: TypedPropertyDescriptor<T>): void;
-    function decorator(target: object, propertyKey: string | symbol | undefined, parameterIndex?: number | PropertyDescriptor): void {
-        if (arguments.length === 2 || arguments.length === 3 && parameterIndex === undefined) {
-            if (typeof target === "object" &&
-                typeof target.constructor === "function" &&
-                target.constructor !== Object &&
-                target.constructor !== Function &&
-                (typeof propertyKey === "string" || typeof propertyKey === "symbol")) {
-                ServiceDependency.store(id, target.constructor as new (...args: any[]) => any, propertyKey, ServiceDependencyCardinality.ZeroOrOne);
-                return;
-            }
+    function decorator<O extends object>(target: NonConstructor<O>, propertyKey: string | symbol, descriptor?: TypedPropertyDescriptor<T | undefined>): void;
+    function decorator(...args: DecoratorArgs<T | undefined>): void {
+        if (isConstructorParameterDecoratorArgs(args)) {
+            const [target, , parameterIndex] = args;
+            ServiceDependency.store(id, target, parameterIndex, ServiceDependencyCardinality.ZeroOrOne);
         }
-        else if (arguments.length === 3) {
-            if (typeof target === "function" &&
-                propertyKey === undefined &&
-                typeof parameterIndex === "number") {
-                ServiceDependency.store(id, target as new (...args: any[]) => any, parameterIndex, ServiceDependencyCardinality.ZeroOrOne);
-                return;
-            }
+        else if (isInstancePropertyOrFieldDecoratorArgs(args)) {
+            const [target, propertyKey] = args;
+            ServiceDependency.store(id, target.constructor as Constructor<any[], any>, propertyKey, ServiceDependencyCardinality.ZeroOrOne);
         }
-        debugger;
-        throw new TypeError(`@optional(${id.serviceName.toString()}) can only be used to decorate a constructor parameter or an instance property`);
+        else {
+            debugger;
+            throw new TypeError(`@optional(${id.serviceName.toString()}) can only be used to decorate a constructor parameter or an instance property`);
+        }
     };
 }
