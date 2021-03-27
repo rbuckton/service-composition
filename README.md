@@ -13,12 +13,9 @@
 
 ## Installation
 
-TODO
-<!--
 ```sh
 npm install service-composition
 ```
--->
 
 ## Usage
 
