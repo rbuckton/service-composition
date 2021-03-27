@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) 2021 Ron Buckton
+ * Licensed under the MIT License. See LICENSE in the project root for license information.
+ */
+
 import { Constructor, MatchingKey, MatchingParameter, NonConstructor } from "./types";
 
 export type ConstructorParameterDecorator<T> = <F extends Constructor<any[], any>, I extends number>(target: F, propertyKey: undefined, parameterIndex: MatchingParameter<F, I, T[]>) => void;
