@@ -2,7 +2,6 @@
   "name": "service-composition",
   "version": "0.0.0-pre.0",
   "description": "Decorator-based Dependency Injection API",
-  "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
