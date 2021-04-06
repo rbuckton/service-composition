@@ -106,7 +106,7 @@ const { ServiceIdentifier } = require("service-composition");
 exports.IHelloService = ServiceIdentifier.create("IHelloService");
 
 /**
- * @typedef {IHelloService}
+ * @typedef IHelloService
  * @property {(name: string) => string} sayHello
  */
 ```
@@ -119,7 +119,7 @@ const { ServiceIdentifier } = require("service-composition");
 exports.ITranslateService = ServiceIdentifier.create("ITranslateService");
 
 /**
- * @typedef {ITranslateService}
+ * @typedef ITranslateService
  * @property {(message: string, args: Record<string, any>) => string} format
  */
 ```
